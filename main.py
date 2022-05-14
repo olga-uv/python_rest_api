@@ -86,6 +86,6 @@ def test_not_long_string():
 
 
 def test_status_code_verification():
-    codes = '500'
-    response = requests.get(httpbin_url + 'status/' + codes)
-    print(response.status_code)
+    for codes in ['200', '300', '400', '500']:
+        response = requests.get(httpbin_url + 'status/' + codes)
+        assert int(codes) == response.status_code
