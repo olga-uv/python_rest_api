@@ -1,5 +1,7 @@
 import requests
 import pytest
+import datetime
+
 
 #response = requests.get('http://basic-auth/{user}/{passwd}')
 #print(response.status_code)
@@ -52,27 +54,23 @@ def test_get_items():
     response = requests.get(httpbin_url + 'json')
     parsed_response = response.json()
     key = 'items'
-    if key in parsed_response['slideshow']['slides'][1]:
-        if len(parsed_response['slideshow']['slides'][1][key]) != 0:
-            assert len(parsed_response['slideshow']['slides'][1][key]) != 0
-        else:
-            print(f'Field {key} is empty')
-            assert False
-    else:
-        print(f'Field {key} is not in {httpbin_url}' + '/json')
-        assert False
+    response_items = parsed_response['slideshow']['slides'][1]
+
+    assert key in response_items, f'Field {key} is not in {httpbin_url} json'
+    assert len(response_items[key]) != 0, f'Field {key} is empty'
 
 
 def test_get_redirect_history():
     count = '2'
-    response = requests.get(httpbin_url + 'redirect/' + count)
-    #print(response.text)
-    assert int(count) == len(response.history)
+    response = requests.get(f'{httpbin_url}redirect/{count}')
+
+    assert len(response.history) == int(count)
 
 
 def test_get_user_data():
     user_id = '1'
-    response = requests.get(regres_url + 'api/users/' + user_id)
+    response = requests.get(f'{regres_url}api/users/{user_id}')
+
     assert 'id' in response.json()['data'], '"id" is not in object '
     assert 'email' in response.json()['data'], '"email" is not in object '
     assert 'first_name' in response.json()['data'], '"first_name" is not in object '
@@ -82,10 +80,25 @@ def test_get_user_data():
 
 def test_not_long_string():
     not_long_string = input().replace(" ", "")
-    assert len(not_long_string) <= 30, f'{not_long_string} contains more than 30 symbols'
+    assert len(not_long_string) <= 2, f'{not_long_string} contains more than 30 symbols'
 
 
-def test_status_code_verification():
-    for codes in ['200', '300', '400', '500']:
-        response = requests.get(httpbin_url + 'status/' + codes)
-        assert int(codes) == response.status_code
+@pytest.mark.parametrize('code', ['200', '300', '400', '500'])
+def test_status_code_verification(code):
+    response = requests.get(f'{httpbin_url}status/{code}')
+
+    assert response.status_code == int(code)
+
+
+now = int(datetime.datetime.now().strftime('%Y%m%d'))
+print(now)
+
+
+@pytest.mark.skipif("now < 20220520")
+@pytest.mark.parametrize("email, password", [('eve.holt@reqres.in', 'pistol'), ('eve.holt@reqres.in', 'pistol')])
+def test_registration(email, password):
+    register_user_data = {"email": email, "password": password}
+    response = requests.post(f'{regres_url}api/register', register_user_data)
+
+    assert response.status_code == 200
+
