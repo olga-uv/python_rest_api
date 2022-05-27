@@ -1,6 +1,9 @@
+import datetime
+
 import requests
 import pytest
-import datetime
+
+import assertions
 
 
 #response = requests.get('http://basic-auth/{user}/{passwd}')
@@ -91,14 +94,23 @@ def test_status_code_verification(code):
 
 
 now = int(datetime.datetime.now().strftime('%Y%m%d'))
-print(now)
+date_run = 20220520
 
 
-@pytest.mark.skipif("now < 20220520")
-@pytest.mark.parametrize("email, password", [('eve.holt@reqres.in', 'pistol'), ('eve.holt@reqres.in', 'pistol')])
+@pytest.mark.skipif("now < date_run")
+@pytest.mark.parametrize("email, password",
+                         [pytest.param('evqwee.holt@reqres.in', 'pistol', marks=pytest.mark.xfail),
+                          ('eve.holt@reqres.in', 'pistol')]
+                         )
 def test_registration(email, password):
     register_user_data = {"email": email, "password": password}
     response = requests.post(f'{regres_url}api/register', register_user_data)
 
+    print(response.json())
     assert response.status_code == 200
+
+    fields = {'id': '4', 'token': 'QpwL5tke4Pnpja7X4'}
+
+    assertions.Assertions.assert_json_contents_fields(response, fields)
+
 
