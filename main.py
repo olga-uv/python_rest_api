@@ -114,3 +114,25 @@ def test_registration(email, password):
     assertions.Assertions.assert_json_contents_fields(response, fields)
 
 
+def test_no_name():
+    base_url = "https://reqres.in"
+    request_url = "/api/login"
+    login_data = {
+        "email": "eve.holt@reqres.in",
+        "password": "citylicka"
+    }
+
+    response1 = requests.post(base_url + request_url, data=login_data)
+    token = response1.json()['token']
+    print(token)
+
+    data = {"name": "morpheus",
+            "job": "zion resident"
+            }
+    headers = {'token': token}
+
+    response2 = requests.put(base_url+'/api/users/2', data=data, headers=headers)
+    print(response2.request.body)
+    print(response2.text)
+
+
