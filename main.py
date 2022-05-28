@@ -3,7 +3,8 @@ import datetime
 import requests
 import pytest
 
-import assertions
+from assertions import Assertions
+from json.decoder import JSONDecodeError
 
 
 #response = requests.get('http://basic-auth/{user}/{passwd}')
@@ -56,11 +57,44 @@ regres_url = 'https://reqres.in/'
 def test_get_items():
     response = requests.get(httpbin_url + 'json')
     parsed_response = response.json()
+    print(parsed_response)
     key = 'items'
     response_items = parsed_response['slideshow']['slides'][1]
+    response1 = parsed_response['slideshow']
+    print(response1)
 
+    Assertions.assert_key(response_items, "items")
+    Assertions.assert_key(response1, "author")
     assert key in response_items, f'Field {key} is not in {httpbin_url} json'
     assert len(response_items[key]) != 0, f'Field {key} is empty'
+
+
+def test_key_in_response():
+    # This test checks than key in response
+    response = requests.get(httpbin_url + 'json')
+    parsed_response = response.json()
+    slideshow_dict = parsed_response['slideshow']
+    print(parsed_response)
+    print(slideshow_dict)
+    Assertions.assert_key(slideshow_dict, "author", "Error!")
+    Assertions.assert_key(slideshow_dict, "date", "Error")
+    Assertions.assert_key(slideshow_dict, "slides", "")
+    Assertions.assert_key(slideshow_dict, "title", "")
+
+
+def test_key_is_not_in_response():
+    response = requests.get(httpbin_url + 'json')
+    try:
+        parsed_response = response.json()
+    except JSONDecodeError:
+        print("Response is not a JSON")
+    response1 = parsed_response['slideshow']
+    print(parsed_response)
+    print(response1)
+
+    Assertions.assert_key_is_not_in_response(response1, "name")
+    Assertions.assert_key_is_not_in_response(response1, "author")
+
 
 
 def test_get_redirect_history():
@@ -111,28 +145,22 @@ def test_registration(email, password):
 
     fields = {'id': '4', 'token': 'QpwL5tke4Pnpja7X4'}
 
-    assertions.Assertions.assert_json_contents_fields(response, fields)
+    Assertions.assert_json_contents_fields(response, fields)
 
 
-def test_no_name():
-    base_url = "https://reqres.in"
-    request_url = "/api/login"
-    login_data = {
-        "email": "eve.holt@reqres.in",
-        "password": "citylicka"
-    }
+dict_1 = {'field2': 'value2', 'field3': 'value3', 'автор': 'Агата Кристи', 'asva': 'fadvsv'}
+dict_2 = {'автор': 'Агата Кристи', 'field2': 'value2'}
 
-    response1 = requests.post(base_url + request_url, data=login_data)
-    token = response1.json()['token']
-    print(token)
 
-    data = {"name": "morpheus",
-            "job": "zion resident"
-            }
-    headers = {'token': token}
+def test_1(dict_1, dict_2):
+    for key in dict_2:
+        assert key in dict_1
+        assert dict_2[key] == dict_1[key]
 
-    response2 = requests.put(base_url+'/api/users/2', data=data, headers=headers)
-    print(response2.request.body)
-    print(response2.text)
+
+
+
+
+
 
 
