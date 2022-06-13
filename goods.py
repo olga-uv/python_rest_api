@@ -14,6 +14,22 @@ prohibited_items_dict = {"weapon": ("gun", "knife", "grenade"),
                          "other": ("rarity",)}
 
 
+emails = {'mgu.edu': ['andrei_serov', 'aleksandr_pushkin', 'elena_belova', 'kirill_stepanov'],
+          'gmail.com': ['alena.semyonova', 'ivan.polekhin', 'marina_abramova'],
+          'msu.edu': ['sergei.zharkov', 'julia_lyubimova', 'vitaliy.smirnoff'],
+          'yandex.ru': ['ekaterina_ivanova', 'glebova_nastya'],
+          'harvard.edu': ['john.doe', 'mark.zuckerberg', 'helen_hunt'],
+          'mail.ru': ['roman.kolosov', 'ilya_gromov', 'masha.yashkina']}
+
+
+def emails_by_abc(emails_list):
+    full_emails = []
+    for domains in emails_list:
+        for emails_in_list in emails_list[domains]:
+            full_emails.append(emails_in_list.replace(emails_in_list, emails_in_list + "@" + domains))
+    return sorted(full_emails)
+
+
 def count_by_prohibited_items_and_category(check_dict, prohibited_items):
     count_by_prohibited = 0
     prohibited_category = []
@@ -34,5 +50,6 @@ def get_cheapest_goods(goods_list, price):
     return cheapest_goods_list
 
 
-#print(get_cheapest_goods(beverages, 101))
+print(emails_by_abc(emails))
+print(get_cheapest_goods(beverages, 101))
 print(count_by_prohibited_items_and_category(dict_to_checking, prohibited_items_dict))
