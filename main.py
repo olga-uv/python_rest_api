@@ -96,7 +96,6 @@ def test_key_is_not_in_response():
     Assertions.assert_key_is_not_in_response(response1, "author")
 
 
-
 def test_get_redirect_history():
     count = '2'
     response = requests.get(f'{httpbin_url}redirect/{count}')
