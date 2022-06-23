@@ -61,10 +61,33 @@ def year_by(year):
 
 #print(year_by(int(input())))
 
-list1 = [10, 20, [300, 400, [5000, 6000], 500], 30, 40]
-list2=7000
+# list1 = [10, 20, [300, 400, [5000, 6000], 500], 30, 40]
+# list2=7000
+#
+# list1[2][2].append(list2)
+#
+# print(list1)
+# print(list1[2][2])
 
-list1[2][2].append(list2)
+# list1 = [[1, 7, 8], [9, 7, 102], [6, 106, 105], [100, 99, 98, 103], [1, 2, 3]]
+# maximum = -1
+# for i in range(len(list1)):
+#     if max(list1[i]) > maximum:
+#         maximum = max(list1[i])
+# print(maximum)
 
-print(list1)
-print(list1[2][2])
+# list1 = [[1, 7, 8], [9, 7, 102], [102, 106, 105], [100, 99, 98, 103], [1, 2, 3]]
+# total = 0
+# counter = 0
+# for i in range(len(list1)):
+#     total += sum(list1[i])
+#     counter += len(list1[i])
+# print(total/counter)
+
+def ind_mt(m,r):
+    imt = m/(r**2)
+    return imt
+
+if ind_mt(m,r)< 18.5:
+    print()
+
